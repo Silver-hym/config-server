@@ -5,6 +5,14 @@ product-service:
     OkToRetryOnAllOperations: true # 是否对所有操作都进行重试
     MaxAutoRetriesNextServer: 2 # 切换实例的重试次数
 
+spring:
+  rabbitmq:
+    host: 47.97.219.20
+    port: 5672
+    username: v17
+    password: 123
+    virtual-host: /v17
+
 # Feign开启熔断机制的配置
 feign:
   hystrix:
