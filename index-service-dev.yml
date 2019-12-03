@@ -1,0 +1,54 @@
+# 配置在调用方--包括负载均衡策略——重试机制
+product-service:
+  ribbon:
+    #NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
+    OkToRetryOnAllOperations: true # 是否对所有操作都进行重试
+    MaxAutoRetriesNextServer: 2 # 切换实例的重试次数
+
+# Feign开启熔断机制的配置
+feign:
+  hystrix:
+    enabled: true
+
+# 开启熔断监控仪表盘的配置
+# 要暴露所有的健康监控节点。这样才能实时获取到节点的信息
+# http://localhost:8081/actuator/hystrix.stream 只要加了actuator的依赖就能访问
+# 访问的话 http://localhost:port/hystrix 这个是可视化的访问
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 1000 #默认的连接超时时间1秒,若1秒没有返回数据,自动的触发降级逻辑
+      circuitBreaker:
+        enabled: true
+        requestVolumeThreshold: 5  #触发熔断的最小请求次数，默认20
+        errorThresholdPercentage: 10 #触发熔断的失败请求最小占比，默认50%
+        sleepWindowInMilliseconds: 20000 #熔断多少秒后去尝试请求，默认是5S  OPEN-->half-open
+
+
+
+# 对熔断机制的一些参数进行设置。
+#hystrix:
+#  command:
+#    default:
+#      execution:
+#        isolation:
+#          thread:
+#            timeoutInMilliseconds: 1000 #默认的连接超时时间1秒，若1秒没有返回数据，自动的触发降级逻辑
+#      circuitBreaker:
+#        enabled: true
+#        requestVolumeThreshold: 5 # 触发熔断的最小请求次数，默认20
+#        errorThresholdPercentage: 10 #触发熔断的失败请求最小占比，默认50%，这里的话相当于错一次就开启。5*0.1
+#        sleepWindowInMilliseconds: 20000 # 熔断多少秒后去常识请求，默认是五秒
+
+
+
+
